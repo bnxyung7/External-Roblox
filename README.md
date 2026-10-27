@@ -60,4 +60,4 @@ modifica un archivo del repo, el script no carga y avisa cual fue.
 
 Discord: https://discord.gg/projectbnxyung7
 
-Version 2.4 · canal release
+Version 2.5 · canal release

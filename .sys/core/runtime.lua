@@ -449,7 +449,6 @@ function drawMain(color)
 	WalkSpeedControl.Font = Enum.Font.GothamBold
 	WalkSpeedControl.TextColor3 = textColor
 	WalkSpeedControl.ClearTextOnFocus = false
-	WalkSpeedControl.KeyboardType = Enum.KeyboardType.Number
 	WalkSpeedControl.ZIndex = 10002
 	WalkSpeedControl.Parent = speedRow
 	rounded(WalkSpeedControl, 7)
@@ -710,7 +709,10 @@ end
 function gui()
 	drawCircle(fov, CLR)
 	drawDot(CLR)
-	drawMain(CLR)
+	local ok, err = pcall(drawMain, CLR)
+	if not ok then
+		warn("[BNXYUNG7] el panel fallo y sigue apagado: " .. tostring(err))
+	end
 end
 
 function main()

@@ -4,7 +4,7 @@ Texto listo para copiar y pegar en Discord.
 
 ---
 
-BNXYUNG7 2.4 - script para PC y movil
+BNXYUNG7 2.5 - script para PC y movil
 
 Panel de control con circulo FOV ajustable de 10 a 400, ESP, walkspeed y
 activado de aim. Sin KEY: pegas la linea y esta adentro.
