@@ -3,6 +3,7 @@ local wait, spawn = task.wait, task.spawn
 
 local Localplayer = game.Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
+local isMobile = UIS.TouchEnabled and not UIS.MouseEnabled
 local RS = game:GetService("RunService")
 local mouse = Localplayer:GetMouse()
 local Camera = workspace.CurrentCamera
@@ -38,6 +39,11 @@ end
 local function own(instance)
 	resources[#resources + 1] = instance
 	return instance
+end
+
+local function isPointInput(input)
+	return input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch
 end
 
 shutdown = function()
@@ -335,7 +341,7 @@ function drawMain(color)
 	title.Font = Enum.Font.GothamBold
 	title.Position = UDim2.fromOffset(22, 17)
 	title.Size = UDim2.new(1, -22, 0, 27)
-	local subtitle = text(header, "Dev: BNXYUNG7  /  CONTROLES PC", 10, muted)
+	local subtitle = text(header, isMobile and "Dev: BNXYUNG7  /  CONTROLES MOVIL" or "Dev: BNXYUNG7  /  CONTROLES PC", 10, muted)
 	subtitle.Position = UDim2.fromOffset(23, 46)
 	subtitle.Size = UDim2.new(1, -23, 0, 16)
 
@@ -443,6 +449,7 @@ function drawMain(color)
 	WalkSpeedControl.Font = Enum.Font.GothamBold
 	WalkSpeedControl.TextColor3 = textColor
 	WalkSpeedControl.ClearTextOnFocus = false
+	WalkSpeedControl.KeyboardType = Enum.KeyboardType.Number
 	WalkSpeedControl.ZIndex = 10002
 	WalkSpeedControl.Parent = speedRow
 	rounded(WalkSpeedControl, 7)
@@ -486,14 +493,70 @@ function drawMain(color)
 	sliderButton.ZIndex = 10004
 	sliderButton.Parent = fovRow
 
-	local hint = text(mainPanel, "P: ocultar / mostrar  ·  DELETE / ×: destruir todo", 10, muted)
+	local hint = text(mainPanel, isMobile
+		and "Boton B: ocultar / mostrar  ·  arrastralo donde quieras  ·  x: destruir todo"
+		or "P: ocultar / mostrar  ·  DELETE / ×: destruir todo", 10, muted)
 	hint.Position = UDim2.new(0, 22, 1, -31)
 	hint.Size = UDim2.new(1, -44, 0, 18)
 
+	local mobileButton
+	local buttonPlaced = false
 	local function setMenuVisible(visible)
 		mainPanel.Visible = visible
 		activeSlider = nil
 		panelDragging = false
+		if mobileButton then
+			mobileButton.TextColor3 = visible and accent or muted
+		end
+	end
+
+	if isMobile then
+		mobileButton = own(Instance.new("TextButton"))
+		mobileButton.Name = "BNX_Menu"
+		mobileButton.Size = UDim2.fromOffset(52, 52)
+		mobileButton.BackgroundColor3 = background
+		mobileButton.BorderSizePixel = 0
+		mobileButton.Font = Enum.Font.GothamBold
+		mobileButton.Text = "B"
+		mobileButton.TextSize = 21
+		mobileButton.TextColor3 = accent
+		mobileButton.AutoButtonColor = false
+		mobileButton.ZIndex = 10005
+		mobileButton.Parent = screengui
+		rounded(mobileButton, 26)
+		outlined(mobileButton)
+
+		local buttonDragging = false
+		local buttonMoved = false
+		local buttonDragStart
+		local buttonStart
+
+		track(mobileButton.InputBegan:Connect(function(input)
+			if cleaned or not isPointInput(input) then return end
+			buttonDragging = true
+			buttonMoved = false
+			buttonDragStart = input.Position
+			buttonStart = mobileButton.Position
+		end))
+		track(mobileButton.InputChanged:Connect(function(input)
+			if cleaned or not buttonDragging or not isPointInput(input) then return end
+			local delta = input.Position - buttonDragStart
+			if delta.Magnitude > 8 then
+				buttonMoved = true
+			end
+			mobileButton.Position = UDim2.new(buttonStart.X.Scale, buttonStart.X.Offset + delta.X,
+				buttonStart.Y.Scale, buttonStart.Y.Offset + delta.Y)
+		end))
+		track(UIS.InputEnded:Connect(function(input)
+			if isPointInput(input) then
+				buttonDragging = false
+			end
+		end))
+		track(mobileButton.Activated:Connect(function()
+			if buttonMoved then return end
+			setMenuVisible(not mainPanel.Visible)
+		end))
+		setMenuVisible(true)
 	end
 
 	local function resizeMenu()
@@ -501,12 +564,22 @@ function drawMain(color)
 		if cleaned or not camera then return end
 		local viewport = camera.ViewportSize
 		if viewport.X <= 1 or viewport.Y <= 1 then return end
-		menuScale.Scale = math.min(1, math.max(1, viewport.X - 32) / panelSize.X,
+		local fit = math.min(1, math.max(1, viewport.X - 32) / panelSize.X,
 			math.max(1, viewport.Y - 32) / panelSize.Y)
+		menuScale.Scale = isMobile and math.max(0.66, fit) or fit
 		local size = panelSize * menuScale.Scale
 		local x = math.clamp(mainPanel.Position.X.Offset, 16, math.max(16, viewport.X - size.X - 16))
 		local y = math.clamp(mainPanel.Position.Y.Offset, 16, math.max(16, viewport.Y - size.Y - 16))
 		mainPanel.Position = UDim2.fromOffset(x, y)
+		if mobileButton then
+			if not buttonPlaced then
+				buttonPlaced = true
+				mobileButton.Position = UDim2.fromOffset(math.max(8, viewport.X - 68), 16)
+			end
+			local bx = math.clamp(mobileButton.Position.X.Offset, 8, math.max(8, viewport.X - 60))
+			local by = math.clamp(mobileButton.Position.Y.Offset, 8, math.max(8, viewport.Y - 60))
+			mobileButton.Position = UDim2.fromOffset(bx, by)
+		end
 	end
 
 	local function observeCamera()
@@ -556,7 +629,7 @@ function drawMain(color)
 	track(outlineButton.Activated:Connect(function() FOVOUTLINE.Value = not FOVOUTLINE.Value end))
 	track(WalkSpeedControl.FocusLost:Connect(function(enterpress)
 		local value = tonumber(WalkSpeedControl.Text)
-		if enterpress and value then
+		if value and (enterpress or isMobile) then
 			WalkSpeed.Value = math.clamp(value, 0, 100)
 		end
 		WalkSpeedControl.Text = tostring(WalkSpeed.Value)
@@ -569,20 +642,22 @@ function drawMain(color)
 	end
 
 	track(sliderButton.InputBegan:Connect(function(input)
-		if cleaned or input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
+		if cleaned or not isPointInput(input) then return end
 		panelDragging = false
 		activeSlider = setFovFromX
 		setFovFromX(input.Position.X)
 	end))
 	track(header.InputBegan:Connect(function(input)
-		if cleaned or input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
+		if cleaned or not isPointInput(input) then return end
 		activeSlider = nil
 		panelDragging = true
 		panelDragStart = input.Position
 		panelStart = mainPanel.Position
 	end))
 	track(UIS.InputChanged:Connect(function(input)
-		if cleaned or input.UserInputType ~= Enum.UserInputType.MouseMovement then return end
+		if cleaned then return end
+		if input.UserInputType ~= Enum.UserInputType.MouseMovement
+			and input.UserInputType ~= Enum.UserInputType.Touch then return end
 		if activeSlider then
 			activeSlider(input.Position.X)
 		elseif panelDragging then
@@ -592,7 +667,7 @@ function drawMain(color)
 		end
 	end))
 	track(UIS.InputEnded:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		if isPointInput(input) then
 			activeSlider = nil
 			panelDragging = false
 		end

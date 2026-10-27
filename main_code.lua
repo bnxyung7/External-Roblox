@@ -4,8 +4,8 @@ local MOD = 1000000007
 
 -- Pines de integridad: si cambia un byte de un modulo, no corre.
 local PINS = {
-	["rt/session"] = 193677757,
-	["core/runtime"] = 363574929,
+	["rt/session"] = 164901994,
+	["core/runtime"] = 41279385,
 }
 
 local loaded
