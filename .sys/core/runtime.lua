@@ -3,7 +3,7 @@ local wait, spawn = task.wait, task.spawn
 
 local Localplayer = game.Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
-local isMobile = UIS.TouchEnabled and not UIS.MouseEnabled
+local hasTouch = UIS.TouchEnabled or not UIS.KeyboardEnabled
 local RS = game:GetService("RunService")
 local mouse = Localplayer:GetMouse()
 local Camera = workspace.CurrentCamera
@@ -341,7 +341,7 @@ function drawMain(color)
 	title.Font = Enum.Font.GothamBold
 	title.Position = UDim2.fromOffset(22, 17)
 	title.Size = UDim2.new(1, -22, 0, 27)
-	local subtitle = text(header, isMobile and "Dev: BNXYUNG7  /  CONTROLES MOVIL" or "Dev: BNXYUNG7  /  CONTROLES PC", 10, muted)
+	local subtitle = text(header, hasTouch and "Dev: BNXYUNG7  /  CONTROLES MOVIL" or "Dev: BNXYUNG7  /  CONTROLES PC", 10, muted)
 	subtitle.Position = UDim2.fromOffset(23, 46)
 	subtitle.Size = UDim2.new(1, -23, 0, 16)
 
@@ -493,7 +493,7 @@ function drawMain(color)
 	sliderButton.ZIndex = 10004
 	sliderButton.Parent = fovRow
 
-	local hint = text(mainPanel, isMobile
+	local hint = text(mainPanel, hasTouch
 		and "Boton B: ocultar / mostrar  ·  arrastralo donde quieras  ·  x: destruir todo"
 		or "P: ocultar / mostrar  ·  DELETE / ×: destruir todo", 10, muted)
 	hint.Position = UDim2.new(0, 22, 1, -31)
@@ -510,7 +510,7 @@ function drawMain(color)
 		end
 	end
 
-	if isMobile then
+	if hasTouch then
 		mobileButton = own(Instance.new("TextButton"))
 		mobileButton.Name = "BNX_Menu"
 		mobileButton.Size = UDim2.fromOffset(52, 52)
@@ -566,7 +566,7 @@ function drawMain(color)
 		if viewport.X <= 1 or viewport.Y <= 1 then return end
 		local fit = math.min(1, math.max(1, viewport.X - 32) / panelSize.X,
 			math.max(1, viewport.Y - 32) / panelSize.Y)
-		menuScale.Scale = isMobile and math.max(0.66, fit) or fit
+		menuScale.Scale = hasTouch and math.max(0.66, fit) or fit
 		local size = panelSize * menuScale.Scale
 		local x = math.clamp(mainPanel.Position.X.Offset, 16, math.max(16, viewport.X - size.X - 16))
 		local y = math.clamp(mainPanel.Position.Y.Offset, 16, math.max(16, viewport.Y - size.Y - 16))
@@ -574,7 +574,7 @@ function drawMain(color)
 		if mobileButton then
 			if not buttonPlaced then
 				buttonPlaced = true
-				mobileButton.Position = UDim2.fromOffset(math.max(8, viewport.X - 68), 16)
+				mobileButton.Position = UDim2.fromOffset(size.X + 36, 24)
 			end
 			local bx = math.clamp(mobileButton.Position.X.Offset, 8, math.max(8, viewport.X - 60))
 			local by = math.clamp(mobileButton.Position.Y.Offset, 8, math.max(8, viewport.Y - 60))
@@ -629,7 +629,7 @@ function drawMain(color)
 	track(outlineButton.Activated:Connect(function() FOVOUTLINE.Value = not FOVOUTLINE.Value end))
 	track(WalkSpeedControl.FocusLost:Connect(function(enterpress)
 		local value = tonumber(WalkSpeedControl.Text)
-		if value and (enterpress or isMobile) then
+		if value and (enterpress or hasTouch) then
 			WalkSpeed.Value = math.clamp(value, 0, 100)
 		end
 		WalkSpeedControl.Text = tostring(WalkSpeed.Value)
