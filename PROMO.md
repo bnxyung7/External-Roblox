@@ -4,13 +4,14 @@ Texto listo para copiar y pegar en Discord.
 
 ---
 
-BNXYUNG7 2.2 - script para PC y movil
+BNXYUNG7 2.4 - script para PC y movil
 
 Panel de control con circulo FOV ajustable de 10 a 400, ESP, walkspeed y
 activado de aim. Sin KEY: pegas la linea y esta adentro.
 
 PC: P abre y cierra el menu sin apagar nada, Delete descarga todo.
-Movil: boton B flotante y arrastrable para abrir el menu, controles grandes
+Movil: boton - oculta el menu y deja un icono flotante para abrirlo,
+controles grandes
 y teclado numerico en WalkSpeed.
 
 El menu no se pierde al respawnear.

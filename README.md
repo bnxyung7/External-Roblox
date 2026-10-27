@@ -14,6 +14,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/bnxyung7/External-Rob
 | Tecla | Accion |
 | --- | --- |
 | `P` | Abre y cierra el menu. No apaga nada: deja el aim, el FOV y el ESP como estaban. |
+| `–` | Oculta el menu, igual que `P`. |
 | `Delete` | Descarga el script del cliente: borra la interfaz, el circulo y todas las conexiones. |
 | `x` | El boton de cierre del panel hace lo mismo que `Delete`. |
 
@@ -21,10 +22,10 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/bnxyung7/External-Rob
 
 | Elemento | Accion |
 | --- | --- |
-| Boton `B` | Abre y cierra el menu, igual que `P` en PC. |
-| Arrastrar el boton `B` | Lo mueves donde te sea comodo y queda ahi. |
+| `–` | Oculta el menu y deja un icono flotando al lado. |
+| Icono `≡` | Vuelve a abrir el menu. Arrastralo donde te sea comodo y queda ahi. |
 | Arrastrar la cabecera | Mueve el panel. |
-| `x` | Descarga el script del cliente. |
+| `x` | Descarga el script del cliente, sin necesidad de teclado. |
 
 El panel detecta el aparato: en celular agranda los controles, el cuadro de WalkSpeed
 abre el teclado numerico y cualquier valor escrito se aplica al tocar afuera, sin
@@ -59,4 +60,4 @@ modifica un archivo del repo, el script no carga y avisa cual fue.
 
 Discord: https://discord.gg/projectbnxyung7
 
-Version 2.2 · canal release
+Version 2.4 · canal release

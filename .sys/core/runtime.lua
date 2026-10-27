@@ -494,8 +494,8 @@ function drawMain(color)
 	sliderButton.Parent = fovRow
 
 	local hint = text(mainPanel, hasTouch
-		and "Boton B: ocultar / mostrar  ·  arrastralo donde quieras  ·  x: destruir todo"
-		or "P: ocultar / mostrar  ·  DELETE / ×: destruir todo", 10, muted)
+		and "– oculta el menu  ·  el icono lo abre de nuevo  ·  × destruye todo"
+		or "P o –: ocultar / mostrar  ·  DELETE / ×: destruir todo", 10, muted)
 	hint.Position = UDim2.new(0, 22, 1, -31)
 	hint.Size = UDim2.new(1, -44, 0, 18)
 
@@ -506,9 +506,25 @@ function drawMain(color)
 		activeSlider = nil
 		panelDragging = false
 		if mobileButton then
-			mobileButton.TextColor3 = visible and accent or muted
+			mobileButton.Visible = not visible
+			mobileButton.TextColor3 = accent
 		end
 	end
+
+	local minimize = Instance.new("TextButton")
+	minimize.Name = "minimize"
+	minimize.Position = UDim2.new(1, -96, 0, 20)
+	minimize.Size = UDim2.fromOffset(34, 34)
+	minimize.BackgroundColor3 = surface
+	minimize.BorderSizePixel = 0
+	minimize.Text = "–"
+	minimize.TextSize = 23
+	minimize.Font = Enum.Font.Gotham
+	minimize.TextColor3 = muted
+	minimize.ZIndex = 10002
+	minimize.Parent = mainPanel
+	rounded(minimize, 8)
+	track(minimize.Activated:Connect(function() setMenuVisible(false) end))
 
 	if hasTouch then
 		mobileButton = own(Instance.new("TextButton"))
@@ -517,7 +533,7 @@ function drawMain(color)
 		mobileButton.BackgroundColor3 = background
 		mobileButton.BorderSizePixel = 0
 		mobileButton.Font = Enum.Font.GothamBold
-		mobileButton.Text = "B"
+		mobileButton.Text = "≡"
 		mobileButton.TextSize = 21
 		mobileButton.TextColor3 = accent
 		mobileButton.AutoButtonColor = false

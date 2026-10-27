@@ -1,6 +1,6 @@
 -- BNXYUNG7 | metadatos de la rama cargada
 return {
-	version = "2.3",
+	version = "2.4",
 	channel = "release",
 	modules = {
 		"rt/session",
